@@ -10,7 +10,8 @@ namespace ScrumManagement.Models {
             
         }
 
-        
+        public DbSet<Team> Teams { get; set; } = null!;
+        public DbSet<TeamList> TeamLists { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<Coach> Coaches { get; set; } = null!;
         public DbSet<Sprint> Sprints { get; set; } = null!;

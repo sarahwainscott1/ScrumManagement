@@ -24,12 +24,12 @@ namespace ScrumManagement.Controllers
             var sprint = await _context.Sprints.FindAsync(sprintId);
             if (sprint == null) { throw new Exception("No Sprint found"); }
             sprint.TotalTime = (from st in _context.Stories
-                                join sp in _context.Sprints on st.Id equals sp.StoryId
+                                join sp in _context.Sprints on st.SprintId equals sp.Id
                                 where sp.Id == sprintId
                                 select new {
                                     StoryTime = st.ActualTime}).Sum(x => x.StoryTime);
             sprint.TotalPoints = (from st in _context.Stories
-                                  join sp in _context.Sprints on st.Id equals sp.StoryId
+                                  join sp in _context.Sprints on st.SprintId equals sp.Id
                                   where sp.Id == sprintId
                                   select new {
                                       StoryPoints = st.EstimatedPoints}).Sum(x => x.StoryPoints);

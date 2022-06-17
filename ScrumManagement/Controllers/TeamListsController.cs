@@ -11,57 +11,55 @@ namespace ScrumManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class TeamListsController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public ProductsController(AppDbContext context)
+        public TeamListsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Products
+        // GET: api/TeamLists
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<TeamList>>> GetTeamLists()
         {
-          if (_context.Products == null)
+          if (_context.TeamLists == null)
           {
               return NotFound();
           }
-            return await _context.Products.Include(x => x.TeamMember).ToListAsync();
+            return await _context.TeamLists.ToListAsync();
         }
 
-        // GET: api/Products/5
+        // GET: api/TeamLists/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<TeamList>> GetTeamList(int id)
         {
-          if (_context.Products == null)
+          if (_context.TeamLists == null)
           {
               return NotFound();
           }
-            var product = await _context.Products.Include(x => x.TeamMember)
-                .Include(x => x.Stories)
-                .SingleOrDefaultAsync(x => x.Id == id);
+            var teamList = await _context.TeamLists.FindAsync(id);
 
-            if (product == null)
+            if (teamList == null)
             {
                 return NotFound();
             }
 
-            return product;
+            return teamList;
         }
 
-        // PUT: api/Products/5
+        // PUT: api/TeamLists/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutTeamList(int id, TeamList teamList)
         {
-            if (id != product.Id)
+            if (id != teamList.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(teamList).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +67,7 @@ namespace ScrumManagement.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!TeamListExists(id))
                 {
                     return NotFound();
                 }
@@ -82,44 +80,44 @@ namespace ScrumManagement.Controllers
             return NoContent();
         }
 
-        // POST: api/Products
+        // POST: api/TeamLists
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<TeamList>> PostTeamList(TeamList teamList)
         {
-          if (_context.Products == null)
+          if (_context.TeamLists == null)
           {
-              return Problem("Entity set 'AppDbContext.Products'  is null.");
+              return Problem("Entity set 'AppDbContext.TeamLists'  is null.");
           }
-            _context.Products.Add(product);
+            _context.TeamLists.Add(teamList);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtAction("GetTeamList", new { id = teamList.Id }, teamList);
         }
 
-        // DELETE: api/Products/5
+        // DELETE: api/TeamLists/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteTeamList(int id)
         {
-            if (_context.Products == null)
+            if (_context.TeamLists == null)
             {
                 return NotFound();
             }
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var teamList = await _context.TeamLists.FindAsync(id);
+            if (teamList == null)
             {
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
+            _context.TeamLists.Remove(teamList);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ProductExists(int id)
+        private bool TeamListExists(int id)
         {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.TeamLists?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

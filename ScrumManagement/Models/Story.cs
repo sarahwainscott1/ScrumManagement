@@ -13,11 +13,14 @@ namespace ScrumManagement.Models {
         public int Importance { get; set; }
         public int EstimatedPoints { get; set; }
         public int ActualTime { get; set; }
+
         [JsonIgnore]
         public virtual Sprint? Sprint { get; set; }
         public int SprintId { get; set; }
+
+        public int ProductId { get; set; }
         [JsonIgnore]
-        public virtual TeamMember? TeamMember { get; set; }
-        public int TeamMemberId { get; set; }
+        public virtual Product? Product { get; set; }
+        
     }
 }

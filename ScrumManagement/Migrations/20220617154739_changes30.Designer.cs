@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScrumManagement.Models;
 
@@ -11,9 +12,10 @@ using ScrumManagement.Models;
 namespace ScrumManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220617154739_changes30")]
+    partial class changes30
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,12 +65,12 @@ namespace ScrumManagement.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<int>("TeamMemberId")
+                    b.Property<int?>("ProductOwnerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TeamMemberId");
+                    b.HasIndex("ProductOwnerId");
 
                     b.ToTable("Products");
                 });
@@ -81,13 +83,7 @@ namespace ScrumManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("MaxPoints")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RemainingPoints")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("SprintLength")
@@ -128,7 +124,7 @@ namespace ScrumManagement.Migrations
                     b.Property<int>("Importance")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("SprintId")
@@ -289,29 +285,29 @@ namespace ScrumManagement.Migrations
 
             modelBuilder.Entity("ScrumManagement.Models.Product", b =>
                 {
-                    b.HasOne("ScrumManagement.Models.TeamMember", "TeamMember")
+                    b.HasOne("ScrumManagement.Models.TeamMember", "ProductOwner")
                         .WithMany()
-                        .HasForeignKey("TeamMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductOwnerId");
 
-                    b.Navigation("TeamMember");
+                    b.Navigation("ProductOwner");
                 });
 
             modelBuilder.Entity("ScrumManagement.Models.Sprint", b =>
                 {
-                    b.HasOne("ScrumManagement.Models.Product", null)
-                        .WithMany("Sprints")
-                        .HasForeignKey("ProductId");
+                    b.HasOne("ScrumManagement.Models.Product", "Product")
+                        .WithMany("Sprint")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ScrumManagement.Models.Story", b =>
                 {
-                    b.HasOne("ScrumManagement.Models.Product", "Product")
-                        .WithMany("Stories")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("ScrumManagement.Models.Product", null)
+                        .WithMany("Story")
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("ScrumManagement.Models.Sprint", "Sprint")
                         .WithMany("Story")
@@ -322,8 +318,6 @@ namespace ScrumManagement.Migrations
                     b.HasOne("ScrumManagement.Models.TeamMember", null)
                         .WithMany("Story")
                         .HasForeignKey("TeamMemberId");
-
-                    b.Navigation("Product");
 
                     b.Navigation("Sprint");
                 });
@@ -350,7 +344,7 @@ namespace ScrumManagement.Migrations
             modelBuilder.Entity("ScrumManagement.Models.Team", b =>
                 {
                     b.HasOne("ScrumManagement.Models.Product", null)
-                        .WithMany("Teams")
+                        .WithMany("Team")
                         .HasForeignKey("ProductId");
                 });
 
@@ -375,11 +369,11 @@ namespace ScrumManagement.Migrations
 
             modelBuilder.Entity("ScrumManagement.Models.Product", b =>
                 {
-                    b.Navigation("Sprints");
+                    b.Navigation("Sprint");
 
-                    b.Navigation("Stories");
+                    b.Navigation("Story");
 
-                    b.Navigation("Teams");
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("ScrumManagement.Models.Sprint", b =>
