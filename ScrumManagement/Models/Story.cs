@@ -19,7 +19,7 @@ namespace ScrumManagement.Models {
         public int SprintId { get; set; }
 
         public int ProductId { get; set; }
-        [JsonIgnore]
+        
         public virtual Product? Product { get; set; }
         
     }

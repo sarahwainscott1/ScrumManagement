@@ -44,7 +44,9 @@ namespace ScrumManagement.Controllers
           {
               return NotFound();
           }
-            return await _context.Stories.ToListAsync();
+            return await _context.Stories
+                .Include(x => x.Product)
+                .ToListAsync();
         }
 
         // GET: api/Stories/5
@@ -55,7 +57,7 @@ namespace ScrumManagement.Controllers
           {
               return NotFound();
           }
-            var story = await _context.Stories.FindAsync(id);
+            var story = await _context.Stories.Include(x => x.Product).SingleOrDefaultAsync(x => x.Id == id);
 
             if (story == null)
             {
