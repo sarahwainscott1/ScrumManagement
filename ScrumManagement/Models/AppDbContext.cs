@@ -9,7 +9,7 @@ namespace ScrumManagement.Models {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             
         }
-
+       
         public DbSet<Team> Teams { get; set; } = null!;
         public DbSet<TeamList> TeamLists { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
@@ -17,8 +17,9 @@ namespace ScrumManagement.Models {
         public DbSet<Sprint> Sprints { get; set; } = null!;
         public DbSet<Story> Stories { get; set; } = null!;
         public DbSet<TeamMember> TeamMembers { get; set; } = null!;
-        public DbSet<ScrumManagement.Models.Strength>? Strength { get; set; }
-        public DbSet<ScrumManagement.Models.StrengthList>? StrengthList { get; set; }
+        public DbSet<Strength>? Strength { get; set; }
+        public DbSet<StrengthList>? StrengthList { get; set; }
+        public DbSet<SprintList>? SprintList { get; set; }
     }
     
 

@@ -10,16 +10,13 @@ namespace ScrumManagement.Models {
         public string Feature { get; set; } = string.Empty;
         [StringLength(100)]
         public string Value { get; set; } = string.Empty;
-        public int Importance { get; set; }
+        [StringLength(30)]
+        public string Importance { get; set; } = string.Empty;
         public int EstimatedPoints { get; set; }
-        public int ActualTime { get; set; }
-
-        [JsonIgnore]
-        public virtual Sprint? Sprint { get; set; }
-        public int SprintId { get; set; }
+        public int ActualTime { get; set; } = 0;
 
         public int ProductId { get; set; }
-        
+        [JsonIgnore]
         public virtual Product? Product { get; set; }
         
     }

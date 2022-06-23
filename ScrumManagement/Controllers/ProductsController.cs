@@ -41,6 +41,8 @@ namespace ScrumManagement.Controllers
           }
             var product = await _context.Products.Include(x => x.TeamMember)
                 .Include(x => x.Stories)
+                .Include(x => x.Sprints)
+                .ThenInclude(x => x.SprintLists)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (product == null)

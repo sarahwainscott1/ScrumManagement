@@ -29,7 +29,9 @@ namespace ScrumManagement.Controllers
           {
               return NotFound();
           }
-            return await _context.Sprints.ToListAsync();
+            return await _context.Sprints.Include(x => x.Product)
+                .Include(x => x.SprintLists)
+                .ThenInclude(x => x.Story).ToListAsync();
         }
 
         // GET: api/Sprints/5
@@ -40,7 +42,10 @@ namespace ScrumManagement.Controllers
           {
               return NotFound();
           }
-            var sprint = await _context.Sprints.FindAsync(id);
+            var sprint = await _context.Sprints.Include(x => x.Product)
+                .Include(x => x.SprintLists)
+                .ThenInclude(x => x.Story)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (sprint == null)
             {

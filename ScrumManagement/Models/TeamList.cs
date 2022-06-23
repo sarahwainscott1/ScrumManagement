@@ -7,6 +7,7 @@ namespace ScrumManagement.Models {
 
         [JsonIgnore]
         public Team? Team { get; set; }
+
         public int TeamMemberId { get; set; }
         
         public TeamMember? TeamMember { get; set; }
