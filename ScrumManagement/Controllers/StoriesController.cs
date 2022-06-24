@@ -20,8 +20,37 @@ namespace ScrumManagement.Controllers
         {
             _context = context;
         }
-        //calculate story points and time
-        
+
+        //recalculate sprint totals
+        private async Task<ActionResult> CalculateSprintTotals(int storyid) {
+
+
+            var sprintId = await (from st in _context.Stories
+                            join sl in _context.SprintList on st.Id equals sl.StoryId
+                            where sl.StoryId == storyid
+                            select sl.SprintId).SingleAsync(); ;
+
+            var sprint = await _context.Sprints.FindAsync(sprintId);
+
+            if (sprint == null) { throw new Exception("No Sprint found"); }
+
+            sprint.TotalTime = (from st in _context.Stories
+                                join sl in _context.SprintList on st.Id equals sl.StoryId
+                                where sl.SprintId == sprint.Id && sl.StoryId == storyid
+                                select new {
+                                    StoryTime = st.ActualTime
+                                }).Sum(x => x.StoryTime);
+
+            sprint.TotalPoints = (from st in _context.Stories
+                                  join sl in _context.SprintList on st.Id equals sl.StoryId
+                                  where sl.SprintId == sprint.Id && sl.StoryId == storyid
+                                  select new {
+                                      StoryPoints = st.EstimatedPoints
+                                  }).Sum(x => x.StoryPoints);
+            sprint.RemainingPoints = sprint.MaxPoints - sprint.TotalPoints;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
         // GET: api/Stories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Story>>> GetStories()
@@ -93,7 +122,7 @@ namespace ScrumManagement.Controllers
             }
             var stories = new List<Story>();
            var allStories = await _context.Stories
-                .Include(x => x.Product).Where(x => x.ProductId == productId)
+               .Where(x => x.ProductId == productId)
                 .ToListAsync();
             if(allStories.Count == 0) { throw new Exception("No Stories on Product"); }
 
@@ -104,10 +133,8 @@ namespace ScrumManagement.Controllers
             if(sprintLists.Count == 0) { return allStories; }
 
             foreach (var story in allStories) { 
-                foreach( var sl in sprintLists) {
-                    if(story.Id != sl.StoryId) {
-                        stories.Add(story);
-                    }
+               if(!sprintLists.Select(x => x.StoryId).Contains(story.Id)) {
+                        stories.Add(story); 
                 }
             }
        
@@ -130,7 +157,7 @@ namespace ScrumManagement.Controllers
             try
             {
                 await _context.SaveChangesAsync();
-               
+                await CalculateSprintTotals(id);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -158,7 +185,7 @@ namespace ScrumManagement.Controllers
           }
             _context.Stories.Add(story);
             await _context.SaveChangesAsync();
-           
+            await CalculateSprintTotals(story.Id);
 
             return CreatedAtAction("GetStory", new { id = story.Id }, story);
         }
@@ -179,7 +206,7 @@ namespace ScrumManagement.Controllers
 
             _context.Stories.Remove(story);
             await _context.SaveChangesAsync();
-           
+            await CalculateSprintTotals(id);
 
             return NoContent();
         }

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScrumManagement.Models;
-
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(x => {
     x.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext"));
 });
-
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddCors();
 
 var app = builder.Build();

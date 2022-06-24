@@ -12,9 +12,9 @@ namespace ScrumManagement.Models {
         public virtual TeamMember? TeamMember { get; set; }
         
         public virtual List<Story>? Stories { get; set; }
-
+        
         public virtual List<Sprint>? Sprints { get; set; }
-
+        
         public virtual List<Team>? Teams { get; set; }
        
     }

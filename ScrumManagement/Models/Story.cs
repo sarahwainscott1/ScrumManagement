@@ -16,7 +16,7 @@ namespace ScrumManagement.Models {
         public int ActualTime { get; set; } = 0;
 
         public int ProductId { get; set; }
-        [JsonIgnore]
+        
         public virtual Product? Product { get; set; }
         
     }

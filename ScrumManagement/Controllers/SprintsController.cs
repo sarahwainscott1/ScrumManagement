@@ -15,6 +15,9 @@ namespace ScrumManagement.Controllers
     public class SprintsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private const string InProgress = "In Progress";
+        private const string Concluded = "Concluded";
+        private const string Cancelled = "Cancelled";
 
         public SprintsController(AppDbContext context)
         {
@@ -54,7 +57,23 @@ namespace ScrumManagement.Controllers
 
             return sprint;
         }
+        //get my current sprint
+        [HttpGet("currentsprint/{employeeId}")]
+        public async Task<ActionResult<IEnumerable<Sprint>>> GetCurrentSprint(int employeeId) {
+            
+            var myTeamId = (from tl in _context.TeamLists
+                            where tl.TeamMemberId == employeeId
+                            select tl.TeamId).Single();
 
+            var sprints = await _context.Sprints
+                .Include(x => x.Product)
+                .Include(x => x.SprintLists)
+                .ThenInclude(x => x.Story)
+                .Where(x => x.Status == InProgress && x.TeamId == myTeamId)
+                .ToListAsync();
+
+            return sprints; 
+        }
         // PUT: api/Sprints/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -85,7 +104,24 @@ namespace ScrumManagement.Controllers
 
             return NoContent();
         }
-
+        //Status to in progress
+        [HttpPut("inprogress/{id}")]
+        public async Task<IActionResult> SprintInProgress(int id, Sprint sprint) {
+            sprint.Status = InProgress;
+            return await PutSprint(id, sprint);
+        }
+        //status to concluded
+        [HttpPut("concluded/{id}")]
+        public async Task<IActionResult> SprintConcluded(int id, Sprint sprint) {
+            sprint.Status = Concluded;
+            return await PutSprint(id, sprint);
+        }
+        //status to cancelled
+        [HttpPut("cancelled/{id}")]
+        public async Task<IActionResult> SprintCancelled(int id, Sprint sprint) {
+            sprint.Status = Cancelled;
+            return await PutSprint(id, sprint);
+        }
         // POST: api/Sprints
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
