@@ -24,6 +24,7 @@ namespace ScrumManagement.Models {
         
         public virtual Product? Product { get; set; }
         
+        public virtual List<DailyScrum>? DailyScrums { get; set; }
 
     }
 }

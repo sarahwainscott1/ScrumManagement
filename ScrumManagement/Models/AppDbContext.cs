@@ -9,7 +9,7 @@ namespace ScrumManagement.Models {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             
         }
-       
+        public DbSet<DailyScrum> DailyScrum { get; set; } = null!;
         public DbSet<Team> Teams { get; set; } = null!;
         public DbSet<TeamList> TeamLists { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
