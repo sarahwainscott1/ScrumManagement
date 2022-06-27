@@ -11,7 +11,7 @@ namespace ScrumManagement.Models {
         public List<Sprint>? Sprints { get; set; }
 
         public int ProductId { get; set; } = 0;
-        [JsonIgnore]
+        
         public virtual Product? Product { get; set; }
 
     }

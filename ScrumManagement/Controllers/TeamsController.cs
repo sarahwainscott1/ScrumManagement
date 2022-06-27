@@ -24,7 +24,10 @@ namespace ScrumManagement.Controllers
             if (_context.Teams == null) {
                 return NotFound();
             }
-            return await _context.Teams.Include(x => x.TeamList).ThenInclude(x => x.TeamMember).ToListAsync();
+            return await _context.Teams.Include(x => x.TeamList)
+                .ThenInclude(x => x.TeamMember)
+                .Include(x => x.Product)
+                .ToListAsync();
         }
 
         // GET: api/Teams/5
@@ -34,8 +37,9 @@ namespace ScrumManagement.Controllers
                 return NotFound();
             }
             var team = await _context.Teams.Include(x => x.TeamList).
-                ThenInclude(x => x.TeamMember).
-                SingleOrDefaultAsync(x => x.Id == id);
+                ThenInclude(x => x.TeamMember).ThenInclude(x => x.StrengthList).ThenInclude(x => x.Strength)
+                .Include(x => x.Product)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (team == null) {
                 return NotFound();

@@ -59,20 +59,21 @@ namespace ScrumManagement.Controllers
         }
         //get my current sprint
         [HttpGet("currentsprint/{employeeId}")]
-        public async Task<ActionResult<IEnumerable<Sprint>>> GetCurrentSprint(int employeeId) {
+        public async Task<ActionResult<Sprint>> GetCurrentSprint(int employeeId) {
             
             var myTeamId = (from tl in _context.TeamLists
                             where tl.TeamMemberId == employeeId
                             select tl.TeamId).Single();
 
-            var sprints = await _context.Sprints
+            var sprint = await _context.Sprints
                 .Include(x => x.Product)
                 .Include(x => x.SprintLists)
                 .ThenInclude(x => x.Story)
+                .Include(x => x.DailyScrums)
                 .Where(x => x.Status == InProgress && x.TeamId == myTeamId)
-                .ToListAsync();
+                .SingleOrDefaultAsync(x => x.TeamId == myTeamId);
 
-            return sprints; 
+            return sprint; 
         }
         // PUT: api/Sprints/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
